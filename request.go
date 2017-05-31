@@ -12,25 +12,32 @@ type Request struct {
 	path string
 }
 
+// input : Request取輸入參數的方法
 func (this *Request) input() map[string]interface{} {
 	fmt.Println("header", this.req.Header["Content-Type"])
 	fmt.Println("body", this.req.Body)
 	v := make(map[string]interface{})
-	header, exists := this.req.Header["Content-Type"]
-	if exists && header[0] == "application/json" {
-		err := json.NewDecoder(this.req.Body).Decode(&v)
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		err := this.req.ParseForm()
-		if err != nil {
-			panic(err)
-		}
+	jsonData := make(map[string]interface{})
+	// header, exists := this.req.Header["Content-Type"]
 
+	err := this.req.ParseForm()
+	if err == nil {
 		for key, value := range this.req.Form {
+			if len(value) == 1 {
+				v[key] = value[0]
+			} else {
+				v[key] = value
+			}
 			fmt.Println("key: ", key, "value: ", value)
 		}
 	}
+
+	err = json.NewDecoder(this.req.Body).Decode(&jsonData)
+	if err == nil {
+		for key, value := range jsonData {
+			v[key] = value
+		}
+	}
+
 	return v
 }
