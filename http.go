@@ -1,9 +1,10 @@
 package main
 
 import (
-	"database/sql"
+	// "database/sql"
+
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
+	// _ "github.com/go-sql-driver/mysql"
 	"net/http"
 )
 
@@ -19,31 +20,31 @@ type App struct {
 
 var Zuzu *App
 
-func (app *App) dbHandle(handle func(*sql.DB)) {
-	defer func() {
-		if err := recover(); err != nil {
-			fmt.Println("Error: ", err)
-		}
-	}()
+// func (app *App) dbHandle(handle func(*sql.DB)) {
+// 	defer func() {
+// 		if err := recover(); err != nil {
+// 			fmt.Println("Error: ", err)
+// 		}
+// 	}()
+//
+// 	// 建立連線
+// 	db, err := connect("mysql", "go", "root", "a7319779")
+// 	// 於結束前, 關閉連線
+// 	defer db.Close()
+//
+// 	if err != nil {
+// 		panic(err)
+// 	}
+//
+// 	handle(db)
+// }
 
-	// 建立連線
-	db, err := connect("mysql", "go", "root", "a7319779")
-	// 於結束前, 關閉連線
-	defer db.Close()
-
-	if err != nil {
-		panic(err)
-	}
-
-	handle(db)
-}
-
-func connect(driver string, database string, username string, password string) (*sql.DB, error) {
-	// "root:a7319779@/go?charset=utf8"
-	info := username + ":" + password + "@/" + database + "?charset=utf8"
-	db, err := sql.Open(driver, info)
-	return db, err
-}
+// func connect(driver string, database string, username string, password string) (*sql.DB, error) {
+// 	// "root:a7319779@/go?charset=utf8"
+// 	info := username + ":" + password + "@/" + database + "?charset=utf8"
+// 	db, err := sql.Open(driver, info)
+// 	return db, err
+// }
 
 func main() {
 	defer func() {
@@ -70,15 +71,19 @@ func serverHandler(res http.ResponseWriter, req *http.Request) {
 		}
 	}()
 
+	rr := &Request{req: req, path: req.URL.EscapedPath()}
+	fmt.Println("input", rr.input())
+
 	Zuzu = &App{res: res, req: req}
 	Zuzu.Start()
 }
 
+// Start : 處理Request
 func (app *App) Start() {
-	currentUrl := app.req.URL.EscapedPath()
-	fmt.Println("path", currentUrl)
+	currentURL := app.req.URL.EscapedPath()
+	fmt.Println("path", currentURL)
 	route := ServerRoute()
-	handler, exists := route[currentUrl]
+	handler, exists := route[currentURL]
 
 	if !exists {
 		app.view("404", nil)

@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	_ "database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
+	// _ "github.com/go-sql-driver/mysql"
 	"io"
 	"net/http"
 	_ "net/url"
