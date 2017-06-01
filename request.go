@@ -8,21 +8,18 @@ import (
 
 // Request : 請求的物件
 type Request struct {
-	req  *http.Request
+	self *http.Request
 	path string
 }
 
-// input : Request取輸入參數的方法
-func (this *Request) input() map[string]interface{} {
-	fmt.Println("header", this.req.Header["Content-Type"])
-	fmt.Println("body", this.req.Body)
+// allInput : Request取所有輸入參數的方法
+func (req *Request) allInput() map[string]interface{} {
 	v := make(map[string]interface{})
 	jsonData := make(map[string]interface{})
-	// header, exists := this.req.Header["Content-Type"]
 
-	err := this.req.ParseForm()
+	err := req.self.ParseForm()
 	if err == nil {
-		for key, value := range this.req.Form {
+		for key, value := range req.self.Form {
 			if len(value) == 1 {
 				v[key] = value[0]
 			} else {
@@ -32,7 +29,7 @@ func (this *Request) input() map[string]interface{} {
 		}
 	}
 
-	err = json.NewDecoder(this.req.Body).Decode(&jsonData)
+	err = json.NewDecoder(req.self.Body).Decode(&jsonData)
 	if err == nil {
 		for key, value := range jsonData {
 			v[key] = value
@@ -40,4 +37,14 @@ func (this *Request) input() map[string]interface{} {
 	}
 
 	return v
+}
+
+// input : Request 取指定 key 值
+func (req *Request) input(key string) interface{} {
+	allInput := req.allInput()
+	val, exists := allInput[key]
+	if !exists {
+		return nil
+	}
+	return val
 }

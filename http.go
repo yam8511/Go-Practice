@@ -18,6 +18,7 @@ type App struct {
 	res http.ResponseWriter
 }
 
+// Zuzu : App
 var Zuzu *App
 
 // func (app *App) dbHandle(handle func(*sql.DB)) {
@@ -71,8 +72,8 @@ func serverHandler(res http.ResponseWriter, req *http.Request) {
 		}
 	}()
 
-	rr := &Request{req: req, path: req.URL.EscapedPath()}
-	fmt.Println("input", rr.input())
+	rr := &Request{self: req, path: req.URL.EscapedPath()}
+	fmt.Println("input", rr.allInput())
 
 	Zuzu = &App{res: res, req: req}
 	Zuzu.Start()
