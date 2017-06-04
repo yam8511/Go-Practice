@@ -1,5 +1,6 @@
 package main
 
+// ServerRoute : 設定Route
 func ServerRoute() map[string]func(*App) {
 	route := make(map[string]func(*App))
 

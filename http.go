@@ -3,6 +3,7 @@ package main
 import (
 	// "database/sql"
 
+	"encoding/json"
 	"fmt"
 	// _ "github.com/go-sql-driver/mysql"
 	"net/http"
@@ -13,15 +14,25 @@ type Money struct {
 	Price string
 }
 
+// App : Http App
 type App struct {
 	req *http.Request
 	res http.ResponseWriter
 }
 
-// Zuzu : App
-var Zuzu *App
+type UserData struct {
+	Name  string
+	email string
+}
 
-// func (app *App) dbHandle(handle func(*sql.DB)) {
+type UserDataArray struct {
+	User []UserData
+}
+
+// Zuzu : App
+var Zuzu App
+
+// func (app App) dbHandle(handle func(*sql.DB)) {
 // 	defer func() {
 // 		if err := recover(); err != nil {
 // 			fmt.Println("Error: ", err)
@@ -53,10 +64,30 @@ func main() {
 			fmt.Println("Error:", err)
 		}
 	}()
-	Zuzu.startServe()
+	// Zuzu.startServe()
+
+	jsonString := `{"Age":23,"Lang":["Go","PHP",219],"Name":"Zuolar"}`
+	jsonData := []byte(jsonString)
+	var data map[string]interface{}
+	err := json.Unmarshal(jsonData, &data)
+	if err != nil {
+		fmt.Println("Json Decode Error", err)
+	} else {
+		fmt.Println(data)
+	}
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		var v map[string]interface{}
+		err := json.NewDecoder(r.Body).Decode(&v)
+		if err != nil {
+			fmt.Println("Json Decode Error", err)
+		} else {
+			fmt.Println(data)
+		}
+	})
 }
 
-func (app *App) startServe() {
+func (app App) startServe() {
 	// 當瀏覽器輸入根目錄時會呼叫 indexHandle() 涵式
 	// 當 Request 找不到指定 url 會選擇根目錄
 	// 若連 根目錄 也找不到, 會跑出 "404 page not found"
@@ -73,14 +104,16 @@ func serverHandler(res http.ResponseWriter, req *http.Request) {
 	}()
 
 	rr := &Request{self: req, path: req.URL.EscapedPath()}
-	fmt.Println("input", rr.allInput())
+	fmt.Println("input rr", rr.allInput())
 
-	Zuzu = &App{res: res, req: req}
+	Zuzu.req = req
+	Zuzu.res = res
+	// Zuzu = &App{res: res, req: req}
 	Zuzu.Start()
 }
 
 // Start : 處理Request
-func (app *App) Start() {
+func (app App) Start() {
 	currentURL := app.req.URL.EscapedPath()
 	fmt.Println("path", currentURL)
 	route := ServerRoute()
@@ -89,6 +122,6 @@ func (app *App) Start() {
 	if !exists {
 		app.view("404", nil)
 	} else {
-		handler(app)
+		handler(&app)
 	}
 }
