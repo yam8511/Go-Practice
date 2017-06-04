@@ -1,0 +1,13 @@
+version: "2"
+
+services:
+
+    dev_go:
+      container_name: dev_go
+      image: golang:latest
+      command: ./go-web
+      ports:
+        - "8000:8000"
+      volumes:
+        - .:/app/Go-Practice
+      working_dir: /app/Go-Practice
