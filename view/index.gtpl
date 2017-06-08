@@ -2,11 +2,11 @@
     <body>
         <form action="" method="post">
           <div>
-            <label>Name</label>
+            <label>Item</label>
             <input type="text" name="item"/>
           </div>
           <div>
-            <label>Password</label>
+            <label>Price</label>
             <input type="text" name="price"/>
           </div>
           <input type="hidden" name="token" value="{{.}}" />

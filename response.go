@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"text/template"
+	"encoding/json"
 )
 
 // Response : 回應的物件
@@ -14,6 +15,19 @@ type Response struct {
 // json : Response 回應 Json 資料
 func (res *Response) json(data interface{}) {
 	res.self.Header().Add("Content-Type", "application/json")
+
+    // json.Marshal 回傳 []byte 跟 error
+    jsonData, err := json.Marshal(data)
+    // 如果 err 不為 nil , 表示編碼有問題
+    if err != nil {
+        fmt.Fprint("Json Encode Error")
+    } else {
+        // Json資料為 []byte 型態, 須轉字串才看得懂
+        output := string(jsonData)
+        fmt.Fprint(output)
+        // ---> {"Age":23,"Lang":["Go","PHP",219],"Name":"Zuolar"}
+        // ---> {"User":[{"Name":"Zuolar"},{"Name":"Golang"}]}
+    }
 }
 
 func (res *Response) view(page string, data interface{}) {

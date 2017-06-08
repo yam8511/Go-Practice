@@ -3,7 +3,7 @@ package main
 import (
 	// "database/sql"
 
-	"encoding/json"
+	// "encoding/json"
 	"fmt"
 	// _ "github.com/go-sql-driver/mysql"
 	"net/http"
@@ -16,8 +16,8 @@ type Money struct {
 
 // App : Http App
 type App struct {
-	req *http.Request
-	res http.ResponseWriter
+	req *Request
+	res *Response
 }
 
 type UserData struct {
@@ -64,27 +64,27 @@ func main() {
 			fmt.Println("Error:", err)
 		}
 	}()
-	// Zuzu.startServe()
+	Zuzu.startServe()
 
-	jsonString := `{"Age":23,"Lang":["Go","PHP",219],"Name":"Zuolar"}`
-	jsonData := []byte(jsonString)
-	var data map[string]interface{}
-	err := json.Unmarshal(jsonData, &data)
-	if err != nil {
-		fmt.Println("Json Decode Error", err)
-	} else {
-		fmt.Println(data)
-	}
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		var v map[string]interface{}
-		err := json.NewDecoder(r.Body).Decode(&v)
-		if err != nil {
-			fmt.Println("Json Decode Error", err)
-		} else {
-			fmt.Println(data)
-		}
-	})
+	// jsonString := `{"Age":23,"Lang":["Go","PHP",219],"Name":"Zuolar"}`
+	// jsonData := []byte(jsonString)
+	// var data map[string]interface{}
+	// err := json.Unmarshal(jsonData, &data)
+	// if err != nil {
+	// 	fmt.Println("Json Decode Error", err)
+	// } else {
+	// 	fmt.Println(data)
+	// }
+	//
+	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	// 	var v map[string]interface{}
+	// 	err := json.NewDecoder(r.Body).Decode(&v)
+	// 	if err != nil {
+	// 		fmt.Println("Json Decode Error", err)
+	// 	} else {
+	// 		fmt.Println(data)
+	// 	}
+	// })
 }
 
 func (app App) startServe() {
@@ -103,10 +103,10 @@ func serverHandler(res http.ResponseWriter, req *http.Request) {
 		}
 	}()
 
-	rr := &Request{self: req, path: req.URL.EscapedPath()}
-	fmt.Println("input rr", rr.allInput())
+	request := &Request{self: req, path: req.URL.EscapedPath()}
+	// fmt.Println("input rr", rr.allInput())
 
-	Zuzu.req = req
+	Zuzu.req = request
 	Zuzu.res = res
 	// Zuzu = &App{res: res, req: req}
 	Zuzu.Start()
