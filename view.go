@@ -13,12 +13,12 @@ func (app *App) view(page string, data interface{}) {
 		fmt.Println("view error", err)
 		panic("page didn't exist: " + page + ".gtpl")
 	} else {
-		t.Execute(app.res, data)
+		t.Execute(app.res.self, data)
 	}
 }
 
 func (app *App) json(interface{}) *App {
 	var json string
-	fmt.Fprint(app.res, json)
+	fmt.Fprint(app.res.self, json)
 	return app
 }

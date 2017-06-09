@@ -2,8 +2,6 @@ package main
 
 import (
 	// "database/sql"
-
-	// "encoding/json"
 	"fmt"
 	// _ "github.com/go-sql-driver/mysql"
 	"net/http"
@@ -20,43 +18,8 @@ type App struct {
 	res *Response
 }
 
-type UserData struct {
-	Name  string
-	email string
-}
-
-type UserDataArray struct {
-	User []UserData
-}
-
 // Zuzu : App
 var Zuzu App
-
-// func (app App) dbHandle(handle func(*sql.DB)) {
-// 	defer func() {
-// 		if err := recover(); err != nil {
-// 			fmt.Println("Error: ", err)
-// 		}
-// 	}()
-//
-// 	// 建立連線
-// 	db, err := connect("mysql", "go", "root", "a7319779")
-// 	// 於結束前, 關閉連線
-// 	defer db.Close()
-//
-// 	if err != nil {
-// 		panic(err)
-// 	}
-//
-// 	handle(db)
-// }
-
-// func connect(driver string, database string, username string, password string) (*sql.DB, error) {
-// 	// "root:a7319779@/go?charset=utf8"
-// 	info := username + ":" + password + "@/" + database + "?charset=utf8"
-// 	db, err := sql.Open(driver, info)
-// 	return db, err
-// }
 
 func main() {
 	defer func() {
@@ -64,27 +27,8 @@ func main() {
 			fmt.Println("Error:", err)
 		}
 	}()
-	Zuzu.startServe()
 
-	// jsonString := `{"Age":23,"Lang":["Go","PHP",219],"Name":"Zuolar"}`
-	// jsonData := []byte(jsonString)
-	// var data map[string]interface{}
-	// err := json.Unmarshal(jsonData, &data)
-	// if err != nil {
-	// 	fmt.Println("Json Decode Error", err)
-	// } else {
-	// 	fmt.Println(data)
-	// }
-	//
-	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	// 	var v map[string]interface{}
-	// 	err := json.NewDecoder(r.Body).Decode(&v)
-	// 	if err != nil {
-	// 		fmt.Println("Json Decode Error", err)
-	// 	} else {
-	// 		fmt.Println(data)
-	// 	}
-	// })
+	Zuzu.startServe()
 }
 
 func (app App) startServe() {
@@ -103,18 +47,18 @@ func serverHandler(res http.ResponseWriter, req *http.Request) {
 		}
 	}()
 
-	request := &Request{self: req, path: req.URL.EscapedPath()}
+	// request := &Request{self: req, path: req.URL.EscapedPath()}
 	// fmt.Println("input rr", rr.allInput())
 
-	Zuzu.req = request
-	Zuzu.res = res
+	Zuzu.req = &Request{self: req, path: req.URL.EscapedPath()}
+	Zuzu.res = &Response{self: res}
 	// Zuzu = &App{res: res, req: req}
 	Zuzu.Start()
 }
 
 // Start : 處理Request
 func (app App) Start() {
-	currentURL := app.req.URL.EscapedPath()
+	currentURL := app.req.self.URL.EscapedPath()
 	fmt.Println("path", currentURL)
 	route := ServerRoute()
 	handler, exists := route[currentURL]

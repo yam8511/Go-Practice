@@ -15,7 +15,7 @@ import (
 
 func socketHandler(app *App) {
 	data := make(map[string]interface{})
-	data["Host"] = app.req.Host
+	data["Host"] = app.req.self.Host
 	data["Port"] = "8000"
 	app.view("socket", data)
 }
@@ -24,15 +24,15 @@ func loginHandler(app *App) {
 	res, req := app.res, app.req
 
 	// 讀取 Cookie 值
-	cookieValue, _ := req.Cookie("uid")
+	cookieValue, _ := req.self.Cookie("uid")
 	fmt.Println("cookie", cookieValue)
-	fmt.Println("all cookie", req.Cookies())
+	fmt.Println("all cookie", req.self.Cookies())
 
 	// 設置 Cookie 值
 	expiration := time.Now()
 	expiration = expiration.AddDate(1, 0, 0)
 	cookie := http.Cookie{Name: "uid", Value: "Zuolar", Expires: expiration}
-	http.SetCookie(res, &cookie)
+	http.SetCookie(res.self, &cookie)
 
 	// v := url.Values{}
 	// v.Set("name", "Ava")
@@ -53,7 +53,7 @@ func indexHandler(app *App) {
 	token := fmt.Sprintf("%x", h.Sum(nil))
 	app.view("index", token)
 
-	app.req.ParseForm()
+	app.req.self.ParseForm()
 
 	// fmt.Println("username:", template.HTMLEscapeString(app.req.Form.Get("item"))) //输出到服务器端
 	// fmt.Println("password:", template.HTMLEscapeString(app.req.Form.Get("price")))
@@ -65,16 +65,16 @@ func indexHandler(app *App) {
 	// fmt.Println("path", app.req.URL.Path)
 	// fmt.Println("Scheme", app.req.URL.Scheme)
 
-	item := template.HTMLEscapeString(app.req.FormValue("item"))
-	price := template.HTMLEscapeString(app.req.FormValue("price"))
+	item := template.HTMLEscapeString(app.req.self.FormValue("item"))
+	price := template.HTMLEscapeString(app.req.self.FormValue("price"))
 	var p Money = Money{Item: item, Price: price} // 要送到前端的訊息
 	app.view("price", p)
 }
 
 func priceHandler(app *App) {
-	app.req.ParseForm()
-	item := app.req.FormValue("item")
-	price := app.req.FormValue("price")
+	app.req.self.ParseForm()
+	item := app.req.self.FormValue("item")
+	price := app.req.self.FormValue("price")
 	data := make(map[string]interface{})
 	data["Item"] = item
 	data["Price"] = price
@@ -82,9 +82,9 @@ func priceHandler(app *App) {
 }
 
 func sqlHandler(app *App) {
-	app.req.ParseForm()
-	item := app.req.FormValue("item")
-	price := app.req.FormValue("price")
+	app.req.self.ParseForm()
+	item := app.req.self.FormValue("item")
+	price := app.req.self.FormValue("price")
 	data := make(map[string]interface{})
 	data["Item"] = item
 	data["Price"] = price
