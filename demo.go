@@ -2,21 +2,21 @@ package main
 
 import (
 	"fmt"
-
-	ZuZuGo "github.com/yam8511/ZuZuGo"
+	"runtime"
+	"sync"
 )
 
-var app *ZuZuGo.App
-
-func main() {
-	fmt.Println("Hello World")
-	app = new(ZuZuGo.App)
-	route := map[string]func(*ZuZuGo.App){}
-	route["/"] = indexHandler
-	app.SetRoute(route)
-	app.StartServe(8000)
+func runForever(id int) {
+	fmt.Printf("id: %d\n", id)
+	for {
+		runtime.Gosched()
+	}
 }
-
-func indexHandler(app *ZuZuGo.App) {
-	app.Res.JSON("hello")
+func main() {
+	var wg sync.WaitGroup
+	wg.Add(10000)
+	for i := 0; i < 10000; i++ {
+		go runForever(i)
+	}
+	wg.Wait()
 }
