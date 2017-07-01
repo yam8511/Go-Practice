@@ -23,10 +23,10 @@
     <script>
       var socket = io();
       $('form').submit(function(){
-        socket.emit('chat message with ack', $('#m').val(), function(data){
+        socket.emit('chat message with ack', {"user":"zuolar"}, function(data){
           $('#messages').append($('<li>').text('ACK CALLBACK: ' + data));
         });
-        socket.emit('chat message', $('#m').val());
+        socket.emit('chat message', {"user":"zuolar"});
         $('#m').val('');
         return false;
       });
