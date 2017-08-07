@@ -5,9 +5,9 @@
 </head>
 <body>
   <form action="/" method="post">
-    <input type="text" name="msg" />
+    <input type="text" name="uid" placeholder="輸入暱稱"/>
     <button>OK</button>
   </form>
-  <p>最新訊息: {{.}}</p>
+  <p style="color:red">{{.}}</p>
 </body>
 </html>

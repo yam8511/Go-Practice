@@ -14,25 +14,28 @@
     </style>
   </head>
   <body>
+    <h3>{{.}}</h3>
     <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+    <form>
+      <input id="m" autofocus autocomplete="off" /><button>Send</button>
     </form>
-    <script src="/socket.io-1.3.7.js"></script>
-    <script src="/jquery-1.11.1.js"></script>
+    <script src="/asset/socket.io-1.3.7.js"></script>
+    <script src="/asset/jquery-1.11.1.js"></script>
     <script>
+    $(document).ready(function () {
       var socket = io();
       $('form').submit(function(){
-        socket.emit('chat message with ack', $('#m').val(), function(data){
-          $('#messages').append($('<li>').text('ACK CALLBACK: ' + data));
-        });
+        // socket.emit('chat message with ack', $('#m').val(), function(data){
+        //   $('#messages').append($('<li>').text('ACK CALLBACK: ' + data));
+        // });
         socket.emit('chat message', $('#m').val());
         $('#m').val('');
         return false;
       });
       socket.on('chat message', function(msg){
-        $('#messages').append($('<li>').text(msg));
+        $('#messages').prepend($('<li>').text(msg));
       });
+    });
     </script>
   </body>
 </html>

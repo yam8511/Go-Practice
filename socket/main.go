@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -24,35 +23,51 @@ func main() {
 
 	var app = new(ZuZuGo.App)
 	app.SetRoute(map[string]func(*ZuZuGo.App){
-		"/":     indexHandler,
-		"/demo": demoHandler,
+		"/": indexHandler,
 	})
 	app.StartServe(8000)
 }
 
+// func indexHandler(app *ZuZuGo.App) {
+// 	msg := app.Req.Input("msg")
+// 	data := ""
+// 	if msg != nil {
+// 		str := []byte(fmt.Sprint(msg))
+// 		err := ioutil.WriteFile("aa.txt", str, 0777)
+// 		if err != nil {
+// 			fmt.Println("error:", err)
+// 		}
+// 	}
+//
+// 	content, err := ioutil.ReadFile("aa.txt")
+// 	if err != nil {
+// 		fmt.Println("error:", err)
+// 	} else {
+// 		data = string(content)
+// 	}
+//
+// 	app.Res.View("./index", data)
+// }
+
 func indexHandler(app *ZuZuGo.App) {
-	msg := app.Req.Input("msg")
-	data := ""
-	if msg != nil {
-		str := []byte(fmt.Sprint(msg))
-		err := ioutil.WriteFile("aa.txt", str, 0777)
-		if err != nil {
-			fmt.Println("error:", err)
+	if app.Req.Self.Method == "POST" {
+		if app.Req.Input("uid") == "" {
+			app.Res.View("index", "請輸入暱稱")
+		} else {
+			cookieValue := app.Req.Input("uid")
+			cookie := http.Cookie{Name: "uid", Value: cookieValue.(string)}
+			http.SetCookie(app.Res.Self, &cookie)
+			app.Res.View("demo", cookieValue)
+		}
+	} else {
+		cookieValue, err := app.Req.Self.Cookie("uid")
+		log.Println("cookie", cookieValue, err)
+		if err == nil {
+			app.Res.View("demo", cookieValue)
+		} else {
+			app.Res.View("index", nil)
 		}
 	}
-
-	content, err := ioutil.ReadFile("aa.txt")
-	if err != nil {
-		fmt.Println("error:", err)
-	} else {
-		data = string(content)
-	}
-
-	app.Res.View("./index", data)
-}
-
-func demoHandler(app *ZuZuGo.App) {
-	app.Res.View("demo", nil)
 }
 
 func socketErrorHandler(so socket.Socket, err error) {
