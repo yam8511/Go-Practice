@@ -22,7 +22,7 @@ func wg() {
 	}
 	wg.Wait()
 }
-func main1() {
+func main() {
 	fmt.Println("Hello World!")
 	fmt.Println(time.Now())
 	wg()
