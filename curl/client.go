@@ -8,7 +8,7 @@ import (
 	"net/url"
 )
 
-func main_client() {
+func main() {
 	// POST
 	resp, err := http.PostForm("http://localhost:8000/",
 		url.Values{"firstname": {"Kordan"}, "lastname": {"Ou"}})
